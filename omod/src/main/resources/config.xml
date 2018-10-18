@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module configVersion="1.2">
+	<id>${project.parent.artifactId}</id>
+	<name>${project.parent.name}</name>
+	<version>${project.parent.version}</version>
+	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
+	<author>Michael Seaton</author>
+	<description>${project.parent.description}</description>
+	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf</updateURL>
+	<require_version>${openMRSVersion}</require_version>
+
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.ModuleActivator</activator>
+
+    <aware_of_modules>
+        <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
+    </aware_of_modules>
+
+    <extension>
+        <point>org.openmrs.admin.list</point>
+        <class>org.openmrs.module.metadatatools.web.AdminListExtension</class>
+    </extension>
+
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+</module>
