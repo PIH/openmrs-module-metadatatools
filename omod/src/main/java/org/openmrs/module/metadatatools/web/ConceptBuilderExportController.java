@@ -149,13 +149,13 @@ public class ConceptBuilderExportController {
 
         String dataType = getOverrides().get("ConceptDatatype:" + c.getDatatype().getUuid());
         if (dataType == null) {
-            throw new IllegalArgumentException("Unable to find concept datatype; " + c.getDatatype().getName() + " - " + c.getDatatype().getUuid());
+            throw new IllegalArgumentException("Unable to find concept datatype in mapping file; " + c.getDatatype().getName() + " - " + c.getDatatype().getUuid());
         }
         addLine(sb, ".datatype(", dataType, ")");
 
         String conceptClass = getOverrides().get("ConceptClass:" + c.getConceptClass().getUuid());
         if (conceptClass == null) {
-            throw new IllegalArgumentException("Unable to find concept class; " + c.getConceptClass().getName() + " - " + c.getConceptClass().getUuid());
+            throw new IllegalArgumentException("Unable to find concept class in mapping file; " + c.getConceptClass().getName() + " - " + c.getConceptClass().getUuid());
         }
         addLine(sb, ".conceptClass(", conceptClass, ")");
 
@@ -174,7 +174,7 @@ public class ConceptBuilderExportController {
             String cnt = cn.getConceptNameType() != null ? "ConceptNameType." + cn.getConceptNameType().toString() : "null";
             String cnLocale = getOverrides().get("Locale:" + cn.getLocale());
             if (cnLocale == null) {
-                errorMessages.add("Locale " + cnLocale + " not recognized.  Not including concept name: " + cn.getUuid());
+                errorMessages.add("Locale " + cn.getLocale() + " not in mapping file.  Not including concept name: " + cn.getUuid());
             }
             else {
                 addLine(sb, ".name(\"", cn.getUuid(), "\", \"", cn.getName(), "\", ", cnLocale, ", ", cnt, ")");
@@ -184,7 +184,7 @@ public class ConceptBuilderExportController {
         for (ConceptDescription cd : c.getDescriptions()) {
             String cdLocale = getOverrides().get("Locale:" + cd.getLocale());
             if (cdLocale == null) {
-                errorMessages.add("Locale " + cdLocale + " not recognized.  Not including concept description: " + cd.getUuid());
+                errorMessages.add("Locale " + cd.getLocale() + " not in mapping file.  Not including concept description: " + cd.getUuid());
             }
             else {
                 addLine(sb, ".description(\"", cd.getUuid(), "\", \"", escape(cd.getDescription()), "\", ", cdLocale, ")");
@@ -199,7 +199,7 @@ public class ConceptBuilderExportController {
             ConceptReferenceTerm term = cm.getConceptReferenceTerm();
             String conceptSource = getOverrides().get("ConceptSource:" + term.getConceptSource().getUuid());
             if (conceptSource == null) {
-                errorMessages.add("Concept Source not found: " + term.getConceptSource().getName() + "; Not including reference term: " + term.getUuid());
+                errorMessages.add("Concept Source not in mapping file: " + term.getConceptSource().getName() + "; Not including reference term: " + term.getUuid());
             }
             else {
                 addLine(sb, ".mapping(new ConceptMapBuilder(\"", cm.getUuid(), "\")", ".type(", conceptMapType, ")", ".ensureTerm(", conceptSource, ", \"", term.getCode(), "\").build())");
