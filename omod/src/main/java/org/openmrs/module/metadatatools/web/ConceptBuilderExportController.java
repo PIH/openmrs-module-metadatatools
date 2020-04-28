@@ -56,6 +56,11 @@ public class ConceptBuilderExportController {
         m.put("ConceptClass:8d490dfc-c2cc-11de-8d13-0010c6dffd0f", "drug");
         m.put("ConceptClass:8d4907b2-c2cc-11de-8d13-0010c6dffd0f", "test");
         m.put("ConceptClass:8d490bf4-c2cc-11de-8d13-0010c6dffd0f", "procedure");
+        m.put("ConceptClass:8d492ee0-c2cc-11de-8d13-0010c6dffd0f", "miscOrder");
+        m.put("ConceptClass:8e071bfe-520c-44c0-a89b-538e9129b42a", "frequency");
+        m.put("ConceptClass:e30d8601-07f8-413a-9d11-cdfbb28196ec", "unitsOfMeasure");
+        m.put("ConceptClass:b4535251-9183-4175-959e-9ee67dc71e78", "pharmacologicDrugClass");
+        m.put("ConceptClass:0dcf23d4-3008-4d8e-b12c-4ec95d1cfd97", "medicalSupply");
 
         m.put("ConceptMapType:35543629-7d8c-11e1-909d-c80aa9edcf4e", "sameAs");
         m.put("ConceptMapType:43ac5109-7d8c-11e1-909d-c80aa9edcf4e", "narrowerThan");
