@@ -15,6 +15,11 @@
         <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
     </aware_of_modules>
 
+	<advice>
+		<point>org.openmrs.api.ConceptService</point>
+		<class>org.openmrs.module.metadatatools.SaveConceptAdvice</class>
+	</advice>
+
     <extension>
         <point>org.openmrs.admin.list</point>
         <class>org.openmrs.module.metadatatools.web.AdminListExtension</class>
