@@ -33,42 +33,42 @@ public class SaveConceptAdvice implements AfterReturningAdvice {
 	@Override
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) {
 		if (method.getName().equals("saveConcept")) {
-			Concept concept = (Concept) args[0];
-			ConceptService conceptService = Context.getConceptService();
-			String conceptId = concept.getConceptId().toString();
-			ConceptSource pihSource = conceptService.getConceptSourceByName("PIH");
-			ConceptMapType sameAsType = conceptService.getConceptMapTypeByName("SAME-AS");
-			boolean found = false;
-			for (ConceptMap conceptMap : concept.getConceptMappings()) {
-				if (conceptMap.getConceptMapType().equals(sameAsType)) {
-					if (conceptMap.getConceptReferenceTerm().getConceptSource().equals(pihSource)) {
-						if (conceptMap.getConceptReferenceTerm().getCode().equals(conceptId)) {
-							found = true;
+			if ("true".equals(Context.getRuntimeProperties().getProperty("automaticallyCreatePihMapping"))) {
+				Concept concept = (Concept) args[0];
+				ConceptService conceptService = Context.getConceptService();
+				String conceptId = concept.getConceptId().toString();
+				ConceptSource pihSource = conceptService.getConceptSourceByName("PIH");
+				ConceptMapType sameAsType = conceptService.getConceptMapTypeByName("SAME-AS");
+				boolean found = false;
+				for (ConceptMap conceptMap : concept.getConceptMappings()) {
+					if (conceptMap.getConceptMapType().equals(sameAsType)) {
+						if (conceptMap.getConceptReferenceTerm().getConceptSource().equals(pihSource)) {
+							if (conceptMap.getConceptReferenceTerm().getCode().equals(conceptId)) {
+								found = true;
+							}
 						}
 					}
 				}
-			}
-			if (!found) {
-				ConceptReferenceTerm crt = conceptService.getConceptReferenceTermByCode(conceptId, pihSource);
-				if (crt != null) {
-					log.warn("Reusing existing term for PIH:" + conceptId + ". Term = " + crt.getId());
+				if (!found) {
+					ConceptReferenceTerm crt = conceptService.getConceptReferenceTermByCode(conceptId, pihSource);
+					if (crt != null) {
+						log.warn("Reusing existing term for PIH:" + conceptId + ". Term = " + crt.getId());
+					} else {
+						log.warn("Creating a new term for PIH:" + conceptId + " mapping");
+						crt = new ConceptReferenceTerm(pihSource, conceptId, "");
+						crt = conceptService.saveConceptReferenceTerm(crt);
+					}
+					log.warn("Adding term to concept");
+					ConceptMap conceptMap = new ConceptMap();
+					conceptMap.setConcept(concept);
+					conceptMap.setConceptMapType(sameAsType);
+					conceptMap.setConceptReferenceTerm(crt);
+					concept.addConceptMapping(conceptMap);
+					conceptService.saveConcept(concept);
+					log.warn("Successfully added PIH:" + conceptId + " mapping");
+				} else {
+					log.warn("Concept " + conceptId + " already has a PIH:" + conceptId + " mapping");
 				}
-				else {
-					log.warn("Creating a new term for PIH:" + conceptId + " mapping");
-					crt = new ConceptReferenceTerm(pihSource, conceptId, "");
-					crt = conceptService.saveConceptReferenceTerm(crt);
-				}
-				log.warn("Adding term to concept");
-				ConceptMap conceptMap = new ConceptMap();
-				conceptMap.setConcept(concept);
-				conceptMap.setConceptMapType(sameAsType);
-				conceptMap.setConceptReferenceTerm(crt);
-				concept.addConceptMapping(conceptMap);
-				conceptService.saveConcept(concept);
-				log.warn("Successfully added PIH:" + conceptId + " mapping");
-			}
-			else {
-				log.warn("Concept " + conceptId + " already has a PIH:" + conceptId + " mapping");
 			}
 		}
 	}
