@@ -2,7 +2,7 @@ package org.openmrs.module.metadatatools;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 public abstract class BaseMetadataToolsTest extends BaseModuleContextSensitiveTest {
 

@@ -11,22 +11,9 @@
 
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.ModuleActivator</activator>
 
-    <aware_of_modules>
-        <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
-    </aware_of_modules>
+	<require_modules>
+		<require_module>org.openmrs.module.initializer</require_module>
+		<require_module>org.openmrs.module.webservices.rest</require_module>
+	</require_modules>
 
-	<advice>
-		<point>org.openmrs.api.ConceptService</point>
-		<class>org.openmrs.module.metadatatools.SaveConceptAdvice</class>
-	</advice>
-
-    <extension>
-        <point>org.openmrs.admin.list</point>
-        <class>org.openmrs.module.metadatatools.web.AdminListExtension</class>
-    </extension>
-
-	<messages>
-		<lang>en</lang>
-		<file>messages.properties</file>
-	</messages>
 </module>
