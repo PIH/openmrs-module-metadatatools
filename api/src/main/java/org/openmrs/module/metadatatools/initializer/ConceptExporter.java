@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -110,42 +111,48 @@ public class ConceptExporter extends CsvExporter {
                 if (fsn != null && fsn.getLocale().equals(l)) {
                     String header = HEADER_FSNAME + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_FSNAME).add(header);
-                    headers.put(header, fsn.getName());
+                    headers.put(header, getName(fsn));
                 }
                 ConceptName shortName = c.getShortNameInLocale(l);
                 if (shortName != null && shortName.getLocale().equals(l)) {
                     String header = HEADER_SHORTNAME + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_FSNAME).add(header);
-                    headers.put(header, shortName.getName());
+                    headers.put(header, getName(shortName));
                 }
                 int indexTermCounter = 0;
-                for (ConceptName indexTerm : c.getIndexTermsForLocale(l)) {
+                List<ConceptName> indexTerms = new ArrayList<>(c.getIndexTermsForLocale(l));
+                indexTerms.sort(new BeanComparator<>("name"));
+                for (ConceptName indexTerm : indexTerms) {
                     if (indexTerm.getLocale().equals(l)) {
                         indexTermCounter++;
                         String header = HEADER_INDEX_TERM + " " + indexTermCounter + LOCALE_SEPARATOR + l;
                         variableHeaders.get(HEADER_INDEX_TERM).add(header);
-                        headers.put(header, indexTerm.getName());
+                        headers.put(header, getName(indexTerm));
                     }
                 }
                 int synonymCounter = 0;
-                for (ConceptName synonym : c.getSynonyms(l)) {
+                List<ConceptName> synonyms = new ArrayList<>(c.getSynonyms(l));
+                synonyms.sort(new BeanComparator<>("name"));
+                for (ConceptName synonym : synonyms) {
                     if (synonym.getLocale().equals(l)) {
                         synonymCounter++;
                         String header = HEADER_SYNONYM + " " + synonymCounter + LOCALE_SEPARATOR + l;
                         variableHeaders.get(HEADER_SYNONYM).add(header);
-                        headers.put(header, synonym.getName());
+                        headers.put(header, getName(synonym));
                     }
                 }
                 ConceptDescription description = c.getDescription(l, true);
                 if (description != null && description.getLocale().equals(l)) {
                     String header = HEADER_DESC + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_DESC).add(header);
-                    headers.put(header, description.getDescription());
+                    headers.put(header, description.getDescription() == null ? null : description.getDescription().trim());
                 }
             }
             Collection<ConceptMap> conceptMappings = c.getConceptMappings();
             if (conceptMappings != null && !conceptMappings.isEmpty()) {
-                for (ConceptMap cm : conceptMappings) {
+                List<ConceptMap> conceptMaps = new ArrayList<>(conceptMappings);
+                conceptMaps.sort(Comparator.comparing(m -> m.getConceptReferenceTerm().getCode()));
+                for (ConceptMap cm : conceptMaps) {
                     String type = cm.getConceptMapType().getName();
                     String source = cm.getConceptReferenceTerm().getConceptSource().getName();
                     String code = cm.getConceptReferenceTerm().getCode();
@@ -226,7 +233,7 @@ public class ConceptExporter extends CsvExporter {
                 m.put("absolute low", null);
                 m.put("critical low", null);
                 m.put("normal low", null);
-                m.put("allow decimals", null);
+                m.put("allow decimals", "Numeric".equals(c.getDatatype().getName()) ? "false" : null);
                 m.put("units", null);
                 m.put("display precision", null);
             }
@@ -246,8 +253,12 @@ public class ConceptExporter extends CsvExporter {
     }
 
     private String getConceptRef(Concept concept) {
-        ConceptName fsn = concept.getFullySpecifiedName(Locale.ENGLISH);
-        return fsn == null || BooleanUtils.isTrue(concept.getRetired()) ? concept.getUuid() : fsn.getName();
+        String fsn = getName(concept.getFullySpecifiedName(Locale.ENGLISH));
+        return fsn == null || BooleanUtils.isTrue(concept.getRetired()) ? concept.getUuid() : fsn;
+    }
+
+    private String getName(ConceptName conceptName) {
+        return conceptName == null || conceptName.getName() == null ? null : conceptName.getName().trim();
     }
 
     private Map<Concept, Map<String, String>> sortConcepts(Map<Concept, Map<String, String>> variableHeadersByConcept, Map<String, Set<String>> variableHeaders) {
