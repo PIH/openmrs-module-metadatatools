@@ -1,6 +1,7 @@
 package org.openmrs.module.metadatatools.initializer;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.BooleanUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.ConceptClass;
@@ -242,7 +243,7 @@ public class ConceptExporter extends CsvExporter {
 
     private String getConceptRef(Concept concept) {
         ConceptName fsn = concept.getFullySpecifiedName(Locale.ENGLISH);
-        return fsn == null ? concept.getUuid() : fsn.getName();
+        return fsn == null || BooleanUtils.isTrue(concept.getRetired()) ? concept.getUuid() : fsn.getName();
     }
 
     private Map<Concept, Map<String, String>> sortConcepts(Map<Concept, Map<String, String>> variableHeadersByConcept, Map<String, Set<String>> variableHeaders) {
