@@ -107,33 +107,37 @@ public class ConceptExporter extends CsvExporter {
             Map<String, String> headers = new LinkedHashMap<>();
             for (Locale l : locales) {
                 ConceptName fsn = c.getFullySpecifiedName(l);
-                if (fsn != null) {
+                if (fsn != null && fsn.getLocale().equals(l)) {
                     String header = HEADER_FSNAME + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_FSNAME).add(header);
                     headers.put(header, fsn.getName());
                 }
                 ConceptName shortName = c.getShortNameInLocale(l);
-                if (shortName != null) {
+                if (shortName != null && shortName.getLocale().equals(l)) {
                     String header = HEADER_SHORTNAME + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_FSNAME).add(header);
                     headers.put(header, shortName.getName());
                 }
                 int indexTermCounter = 0;
                 for (ConceptName indexTerm : c.getIndexTermsForLocale(l)) {
-                    indexTermCounter++;
-                    String header = HEADER_INDEX_TERM + " " + indexTermCounter + LOCALE_SEPARATOR + l;
-                    variableHeaders.get(HEADER_INDEX_TERM).add(header);
-                    headers.put(header, indexTerm.getName());
+                    if (indexTerm.getLocale().equals(l)) {
+                        indexTermCounter++;
+                        String header = HEADER_INDEX_TERM + " " + indexTermCounter + LOCALE_SEPARATOR + l;
+                        variableHeaders.get(HEADER_INDEX_TERM).add(header);
+                        headers.put(header, indexTerm.getName());
+                    }
                 }
                 int synonymCounter = 0;
                 for (ConceptName synonym : c.getSynonyms(l)) {
-                    synonymCounter++;
-                    String header = HEADER_SYNONYM + " " + synonymCounter + LOCALE_SEPARATOR + l;
-                    variableHeaders.get(HEADER_SYNONYM).add(header);
-                    headers.put(header, synonym.getName());
+                    if (synonym.getLocale().equals(l)) {
+                        synonymCounter++;
+                        String header = HEADER_SYNONYM + " " + synonymCounter + LOCALE_SEPARATOR + l;
+                        variableHeaders.get(HEADER_SYNONYM).add(header);
+                        headers.put(header, synonym.getName());
+                    }
                 }
                 ConceptDescription description = c.getDescription(l, true);
-                if (description != null) {
+                if (description != null && description.getLocale().equals(l)) {
                     String header = HEADER_DESC + LOCALE_SEPARATOR + l;
                     variableHeaders.get(HEADER_DESC).add(header);
                     headers.put(header, description.getDescription());
