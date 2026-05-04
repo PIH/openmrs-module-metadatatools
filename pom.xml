@@ -41,7 +41,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>2.7.4</openMRSVersion>
+        <openMRSVersion>2.7.9</openMRSVersion>
         <initializerVersion>2.9.0</initializerVersion>
         <webservicesRestVersion>3.0.0</webservicesRestVersion>
         <lombokVersion>1.18.42</lombokVersion>
